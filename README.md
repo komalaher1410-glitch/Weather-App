@@ -17,8 +17,8 @@ A responsive weather application that shows real-time weather data using OpenWea
 - OpenWeather API
 
 ## 🔗 Live Demo
-(Add GitHub Pages link here)
+(https://komalaher1410-glitch.github.io/Weather-App/)
 
 ## 📸 Screenshot
-(Add screenshot here)
+
 
