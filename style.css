@@ -5,7 +5,7 @@
 
 body {
   margin: 0;
-  background-image: url("background2.jpg");
+  background-image: url("assets/images/background.jpg");
   background-size: cover;          
   background-repeat: no-repeat;    
   background-position: center;     
@@ -81,4 +81,5 @@ body {
 @media(max-width:600px){
   .container { margin: 20px; }
 }
+
 
