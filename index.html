@@ -1,0 +1,137 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Weather App</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="top">
+<h1>Weather App</h1>
+<button id="themeToggle">🌙</button>
+</div>
+
+<div class="search">
+<input type="text" id="cityInput" placeholder="Enter city">
+<button onclick="searchWeather()">Search</button>
+<button onclick="getLocationWeather()">📍</button>
+<button onclick="saveCity()">⭐</button>
+</div>
+
+<div class="units">
+<button onclick="setUnit('metric')">°C</button>
+<button onclick="setUnit('imperial')">°F</button>
+</div>
+
+<div class="date-select">
+<input type="date" id="datePicker">
+<button onclick="filterForecastByDate()">Check Weather</button>
+</div>
+
+<div id="loader" class="loader hidden"></div>
+
+<div id="weatherResult"></div>
+
+<div id="forecast"></div>
+
+<div id="hourly"></div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Weather Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<header class="top">
+<h1>🌦 Weather Dashboard</h1>
+<button id="themeToggle"><i class="fa fa-moon"></i></button>
+</header>
+
+<div class="search">
+
+<input list="cities" id="cityInput" placeholder="Search city">
+
+<datalist id="cities">
+<option value="Mumbai">
+<option value="Delhi">
+<option value="Pune">
+<option value="Bangalore">
+<option value="Hyderabad">
+</datalist>
+
+<button onclick="searchWeather()">
+<i class="fa fa-search"></i>
+</button>
+
+<button onclick="getLocationWeather()">
+<i class="fa fa-location-dot"></i>
+</button>
+
+<button onclick="saveCity()">
+<i class="fa fa-star"></i>
+</button>
+
+</div>
+
+<div class="units">
+<button onclick="setUnit('metric')">°C</button>
+<button onclick="setUnit('imperial')">°F</button>
+</div>
+
+<div class="date-select">
+<input type="date" id="datePicker">
+<button onclick="filterForecastByDate()">Check Weather</button>
+</div>
+
+<div id="loader" class="loader hidden"></div>
+
+<div id="weatherResult"></div>
+
+<div id="hourly"></div>
+
+<div id="forecast"></div>
+
+<h3>Weather Map</h3>
+<div id="map"></div>
+
+<footer>
+<p>Built by Komal Aher | Frontend Developer</p>
+</footer>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
