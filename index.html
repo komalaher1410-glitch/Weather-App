@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&family=Raleway:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Decorative blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="app-shell">
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">
+          <i class="fa fa-cloud-sun"></i>
+        </div>
+        <span class="logo-wordmark">Weather<br><span>App</span></span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="dashboard">
+          <i class="fa fa-house"></i><span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-tab="forecast">
+          <i class="fa fa-calendar-days"></i><span>Forecast</span>
+        </button>
+        <button class="nav-item" data-tab="map">
+          <i class="fa fa-map"></i><span>Map</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-favourites">
+        <div class="fav-label">Saved Cities</div>
+        <div id="favList" class="fav-list">
+          <div class="fav-empty">No saved cities yet</div>
+        </div>
+      </div>
+
+      <button class="theme-toggle" id="themeToggle">
+        <i class="fa fa-moon"></i><span> Dark Mode</span>
+      </button>
+    </aside>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <main class="main">
+
+      <!-- TOP BAR -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <h2 class="page-title" id="pageTitle">Dashboard</h2>
+        </div>
+        <div class="topbar-right">
+          <div class="search-box">
+            <i class="fa fa-search"></i>
+            <input list="cities" id="cityInput" placeholder="Search city…" autocomplete="off">
+            <datalist id="cities">
+              <option value="Mumbai"><option value="Delhi"><option value="Pune">
+              <option value="Bangalore"><option value="Hyderabad"><option value="London">
+              <option value="New York"><option value="Tokyo"><option value="Paris">
+              <option value="Dubai"><option value="Singapore"><option value="Sydney">
+            </datalist>
+            <button class="search-go" onclick="searchWeather()">
+              <i class="fa fa-arrow-right"></i>
+            </button>
+          </div>
+          <div class="unit-pills">
+            <button id="btnC" class="unit-pill active" onclick="setUnit('metric')">°C</button>
+            <button id="btnF" class="unit-pill" onclick="setUnit('imperial')">°F</button>
+          </div>
+          <button class="icon-action" onclick="getLocationWeather()" title="Use location">
+            <i class="fa fa-location-dot"></i>
+          </button>
+          <button class="icon-action fav-action" onclick="saveCity()" title="Save city">
+            <i class="fa fa-star"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- LOADER -->
+      <div id="loader" class="loader hidden">
+        <div class="loader-dots"><span></span><span></span><span></span></div>
+        <p>Fetching weather data…</p>
+      </div>
+
+      <!-- ── DASHBOARD TAB ── -->
+      <div id="tab-dashboard" class="tab-content active">
+
+        <!-- HERO CARD -->
+        <div id="heroCard" class="hero-card hidden">
+          <div class="hero-bg-icon"></div>
+          <div class="hero-left">
+            <div class="hero-location">
+              <i class="fa fa-location-dot"></i>
+              <span id="heroCity">—</span>
+            </div>
+            <div class="hero-temp" id="heroTemp">—</div>
+            <div class="hero-desc" id="heroDesc">—</div>
+            <div class="hero-date" id="heroDate">—</div>
+            <div class="hero-pills">
+              <span class="hero-pill"><i class="fa fa-arrow-up"></i> <span id="heroHigh">—</span></span>
+              <span class="hero-pill"><i class="fa fa-arrow-down"></i> <span id="heroLow">—</span></span>
+            </div>
+          </div>
+          <div class="hero-right">
+            <img id="heroIcon" class="hero-weather-img" src="" alt="">
+          </div>
+        </div>
+
+        <!-- OVERVIEW GRID -->
+        <div class="section-header">
+          <span class="section-title">Overview</span>
+        </div>
+        <div id="overviewGrid" class="overview-grid hidden">
+          <div class="ov-card" id="ov-feels">
+            <div class="ov-icon"><i class="fa fa-temperature-half"></i></div>
+            <div class="ov-label">Feels Like</div>
+            <div class="ov-val" id="ovFeels">—</div>
+            <div class="ov-bar"><div class="ov-bar-fill" id="ovFeelsBar"></div></div>
+          </div>
+          <div class="ov-card" id="ov-humidity">
+            <div class="ov-icon"><i class="fa fa-droplet"></i></div>
+            <div class="ov-label">Humidity</div>
+            <div class="ov-val" id="ovHumidity">—</div>
+            <div class="ov-bar"><div class="ov-bar-fill" id="ovHumidityBar"></div></div>
+          </div>
+          <div class="ov-card" id="ov-wind">
+            <div class="ov-icon"><i class="fa fa-wind"></i></div>
+            <div class="ov-label">Wind Speed</div>
+            <div class="ov-val" id="ovWind">—</div>
+            <div class="ov-bar"><div class="ov-bar-fill" id="ovWindBar"></div></div>
+          </div>
+          <div class="ov-card" id="ov-vis">
+            <div class="ov-icon"><i class="fa fa-eye"></i></div>
+            <div class="ov-label">Visibility</div>
+            <div class="ov-val" id="ovVis">—</div>
+            <div class="ov-bar"><div class="ov-bar-fill" id="ovVisBar"></div></div>
+          </div>
+          <div class="ov-card" id="ov-pressure">
+            <div class="ov-icon"><i class="fa fa-gauge-high"></i></div>
+            <div class="ov-label">Pressure</div>
+            <div class="ov-val" id="ovPressure">—</div>
+            <div class="ov-bar"><div class="ov-bar-fill" id="ovPressureBar"></div></div>
+          </div>
+          <div class="ov-card sun-card">
+            <div class="ov-icon"><i class="fa fa-sun"></i></div>
+            <div class="ov-label">Sunrise / Sunset</div>
+            <div class="sun-row">
+              <div class="sun-time"><i class="fa fa-sun" style="color:#fbbf24"></i> <span id="ovSunrise">—</span></div>
+              <div class="sun-arc">
+                <svg viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5,50 Q50,-10 95,50" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+                  <circle id="sunDot" cx="50" cy="5" r="5" fill="#fbbf24"/>
+                </svg>
+              </div>
+              <div class="sun-time"><i class="fa fa-moon" style="color:#a78bfa"></i> <span id="ovSunset">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEMPERATURE GRAPH -->
+        <div class="section-header">
+          <span class="section-title">Temperature Trend (24h)</span>
+        </div>
+        <div id="graphCard" class="graph-card hidden">
+          <canvas id="tempChart"></canvas>
+        </div>
+
+        <!-- HOURLY -->
+        <div class="section-header">
+          <span class="section-title">Hourly Forecast</span>
+        </div>
+        <div id="hourlyRow" class="hourly-row hidden"></div>
+
+      </div><!-- /tab-dashboard -->
+
+      <!-- ── FORECAST TAB ── -->
+      <div id="tab-forecast" class="tab-content">
+        <div class="section-header">
+          <span class="section-title">5-Day Forecast</span>
+          <div class="date-filter">
+            <input type="date" id="datePicker">
+            <button class="pill-btn" onclick="filterForecastByDate()"><i class="fa fa-filter"></i> Filter</button>
+          </div>
+        </div>
+        <div id="forecastCards" class="forecast-cards"></div>
+      </div>
+
+      <!-- ── MAP TAB ── -->
+      <div id="tab-map" class="tab-content">
+        <div class="section-header">
+          <span class="section-title">Live Weather Map</span>
+        </div>
+        <div id="map" class="map-container"></div>
+      </div>
+
+    </main>
+  </div><!-- /app-shell -->
+
+  <script src="script.js"></script>
+</body>
+</html>
